@@ -1,0 +1,2 @@
+pcap_dir,files_processed,packets_processed,bytes_processed,elapsed_sec,processing_rate_pps,num_alarms,first_alarm_time,mode,beta,sample_pow,prevalence_th,src_disp_th,dst_disp_th,port_mode,total_packets,payload_zero_count,payload_below_beta_count,frac_payload_zero,frac_payload_below_beta
+/home/haarika/imp_files/automated_worm/witty,1,500,27000,0.0198,25213.11,0,,whole,40,6,3,10,10,dst,500,0,0,0.0,0.0

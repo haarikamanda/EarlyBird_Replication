@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: earlybird-witty
+Version: 0.1.0
+Summary: EarlyBird content-sifting worm fingerprinting on CAIDA Witty pcaps
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: dpkt>=1.9.8
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
