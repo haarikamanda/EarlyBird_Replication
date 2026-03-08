@@ -86,8 +86,10 @@ def main() -> None:
         pcap_dir = str(decompress_pcaps(args.pcap_dir, args.decompress_to))
 
     def on_file_done(stat: dict) -> None:
+        tta = stat.get("time_till_first_alarm_sec")
+        tta_str = f", time_till_first_alarm: {tta:.2f}s" if tta is not None else ", time_till_first_alarm: —"
         print(f"  [{stat['file_idx']+1}] {stat['file_name']}: "
-              f"{stat['packets']} pkts, {stat['alarms_this_file']} alarms (total: {stat['cumulative_alarms']})")
+              f"{stat['packets']} pkts, {stat['alarms_this_file']} alarms (total: {stat['cumulative_alarms']}){tta_str}")
 
     def on_progress(stat: dict) -> None:
         print(f"    [{stat['file_name']}] {stat['packets_this_file']:,} pkts in file | "
@@ -119,7 +121,7 @@ def main() -> None:
     # Write final results (if not already writing after each file, or to ensure final state)
     per_file_file = out_path / "alarms_per_file.csv"
     with open(per_file_file, "w", newline="") as f:
-        fieldnames = ["file_idx", "file_name", "packets", "alarms_this_file", "cumulative_alarms", "error"]
+        fieldnames = ["file_idx", "file_name", "packets", "alarms_this_file", "cumulative_alarms", "time_till_first_alarm_sec", "error"]
         w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         w.writeheader()
         w.writerows(per_file_stats)

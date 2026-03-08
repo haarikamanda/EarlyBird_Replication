@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import json
+import time
 from pathlib import Path
 from typing import Callable
 
@@ -36,7 +37,7 @@ def _write_results(
         for a in alarms:
             f.write(json.dumps(a) + "\n")
     with open(out_path / "alarms_per_file.csv", "w", newline="") as f:
-        fieldnames = ["file_idx", "file_name", "packets", "alarms_this_file", "cumulative_alarms", "error"]
+        fieldnames = ["file_idx", "file_name", "packets", "alarms_this_file", "cumulative_alarms", "time_till_first_alarm_sec", "error"]
         w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         w.writeheader()
         w.writerows(per_file_stats)
@@ -130,6 +131,8 @@ def run(
     for file_idx, path in enumerate(paths):
         if not unlimited and remaining is not None and remaining <= 0:
             break
+        file_start_time = time.monotonic()
+        file_time_till_first_alarm_sec: float | None = None
         alarms_before_file = len(alarms)
         packets_this_file = 0
         file_error: str | None = None
@@ -178,6 +181,8 @@ def run(
                                 seen_alarm_keys.add(alarm_key)
                                 if run_metrics.first_alarm_time is None:
                                     run_metrics.first_alarm_time = ts
+                                if file_time_till_first_alarm_sec is None:
+                                    file_time_till_first_alarm_sec = time.monotonic() - file_start_time
                                 alarms.append({
                                     "timestamp": ts,
                                     "key": str(key),
@@ -201,6 +206,7 @@ def run(
             "packets": packets_this_file,
             "alarms_this_file": alarms_this_file,
             "cumulative_alarms": len(alarms),
+            "time_till_first_alarm_sec": round(file_time_till_first_alarm_sec, 4) if file_time_till_first_alarm_sec is not None else None,
         }
         if file_error is not None:
             file_stat["error"] = file_error
