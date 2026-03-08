@@ -4,3 +4,7 @@ results_dir/*
 results_all/
 results/
 results_dir/
+results_substring_worm/*
+results_substring_worm/
+results_ucsb_data/*
+results_ucsb_data/
